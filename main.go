@@ -32,11 +32,22 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not spawn ship: %v", err)
 	}
-	log.Printf("spawned ship: %s", x)
+
+	var uuid string
+	uuid = x.UUID
+	log.Printf("spawned ship: %s", uuid)
 
 	r, err := c.GetBattleground(ctx, &pb.Empty{})
 	if err != nil {
 		log.Fatalf("could not get battleground: %v", err)
 	}
-	log.Printf("battleground: %s", r)
+
+	log.Printf("battleground: %d ships", len(r.Ships))
+	for i := 0; i < len(r.Ships); i++ {
+		if r.Ships[i].UUID == uuid {
+			var ship pb.Ship
+			ship = *r.Ships[i]
+			log.Printf("ship[%d]: %s %s %f %f", i, ship.Position, ship.RotationVector, ship.Hull, ship.Battery)
+		}
+	}
 }
