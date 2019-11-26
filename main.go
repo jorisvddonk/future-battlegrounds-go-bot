@@ -15,6 +15,10 @@ const (
 	address = "localhost:50051"
 )
 
+func pv(v v.T) *v.T {
+	return &v
+}
+
 func main() {
 	// North := v.T{0, -1}
 	// East := v.T{1, 0}
@@ -48,18 +52,38 @@ func main() {
 	}
 
 	log.Printf("battleground: %d ships", len(r.Ships))
+
+	var ship *pb.Ship
 	for i := 0; i < len(r.Ships); i++ {
 		if r.Ships[i].UUID == uuid {
-			var ship pb.Ship
-			var rotation v.T
-			var position v.T
+			ship = r.Ships[i]
+		}
+	}
 
-			ship = *r.Ships[i]
-			rotation = v.T{ship.RotationVector.X, ship.RotationVector.Y}
-			position = v.T{ship.Position.X, ship.Position.Y}
+	if ship != nil {
+		var rotation v.T
+		var position v.T
+		rotation = v.T{ship.RotationVector.X, ship.RotationVector.Y}
+		position = v.T{ship.Position.X, ship.Position.Y}
 
-			log.Printf("ship[%d]: %s %f %f %f", i, ship.Position, (rotation.Angle()*180/math.Pi)+90, ship.Hull, ship.Battery)
-			_ = position
+		log.Printf("ship: %s %f %f %f", ship.Position, (rotation.Angle()*180/math.Pi)+90, ship.Hull, ship.Battery)
+		_ = position
+
+		var closestShip *pb.Ship
+		for i := 0; i < len(r.Ships); i++ {
+			if r.Ships[i] != ship {
+				if closestShip == nil {
+					closestShip = r.Ships[i]
+				} else {
+					len := (pv(v.T{r.Ships[i].Position.X, r.Ships[i].Position.Y})).Sub(&position).Length()
+					if len < (pv(v.T{closestShip.Position.X, closestShip.Position.Y})).Sub(&position).Length() {
+						closestShip = r.Ships[i]
+					}
+				}
+			}
+		}
+		if closestShip != nil {
+			log.Printf("Closest: %s", closestShip.Position)
 		}
 	}
 }
