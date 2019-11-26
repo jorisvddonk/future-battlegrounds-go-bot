@@ -93,8 +93,10 @@ func main() {
 			if closestShip != nil {
 				closestShipPosRel := position.Scale(1).Sub(pv(v.T{closestShip.Position.X, closestShip.Position.Y}))
 				var relRot int
+				var thrust float32
 				var shooting bool
 				relRot = 0
+				thrust = 0
 				shooting = false
 
 				if v.IsLeftWinding(&rotation, closestShipPosRel) {
@@ -108,7 +110,18 @@ func main() {
 					shooting = true
 				}
 
-				x, err := c.SetActionState(ctx, &pb.ShipActionStateRequest{UUID: uuid, Thrust: 0, Rotate: float32(relRot), Shooting: shooting})
+				distance := closestShipPosRel.Length()
+				if ang < 0.3 {
+					if distance > 200 {
+						thrust = 1
+					} else if distance < 100 {
+						thrust = -1
+					} else {
+						thrust = 0
+					}
+				}
+
+				x, err := c.SetActionState(ctx, &pb.ShipActionStateRequest{UUID: uuid, Thrust: thrust, Rotate: float32(relRot), Shooting: shooting})
 				if err != nil {
 					log.Fatalf("fail: %v", err)
 				}
