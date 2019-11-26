@@ -91,20 +91,24 @@ func main() {
 				}
 			}
 			if closestShip != nil {
-				log.Printf("Closest: %s", closestShip.Position)
 				closestShipPosRel := position.Scale(1).Sub(pv(v.T{closestShip.Position.X, closestShip.Position.Y}))
 				var relRot int
+				var shooting bool
 				relRot = 0
+				shooting = false
+
 				if v.IsLeftWinding(&rotation, closestShipPosRel) {
-					log.Printf("turn left!")
 					relRot = -1
 				} else {
-					log.Printf("turn right!")
 					relRot = 1
 				}
-				_ = relRot
 
-				x, err := c.SetActionState(ctx, &pb.ShipActionStateRequest{UUID: uuid, Thrust: 0, Rotate: float32(relRot), Shooting: false})
+				ang := v.Angle(closestShipPosRel, rotation.Scale(-1))
+				if ang < 0.1 {
+					shooting = true
+				}
+
+				x, err := c.SetActionState(ctx, &pb.ShipActionStateRequest{UUID: uuid, Thrust: 0, Rotate: float32(relRot), Shooting: shooting})
 				if err != nil {
 					log.Fatalf("fail: %v", err)
 				}
