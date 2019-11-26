@@ -84,6 +84,17 @@ func main() {
 		}
 		if closestShip != nil {
 			log.Printf("Closest: %s", closestShip.Position)
+			closestShipPosRel := position.Scale(1).Sub(pv(v.T{closestShip.Position.X, closestShip.Position.Y}))
+			var relRot int
+			relRot = 0
+			if v.IsLeftWinding(&rotation, closestShipPosRel) {
+				log.Printf("turn left!")
+				relRot = -1
+			} else {
+				log.Printf("turn right!")
+				relRot = 1
+			}
+			_ = relRot
 		}
 	}
 }
