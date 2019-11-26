@@ -95,6 +95,12 @@ func main() {
 				relRot = 1
 			}
 			_ = relRot
+
+			x, err := c.SetActionState(ctx, &pb.ShipActionStateRequest{UUID: uuid, Thrust: 0, Rotate: float32(relRot), Shooting: false})
+			if err != nil {
+				log.Fatalf("fail: %v", err)
+			}
+			log.Printf("Command success? %t", x.OK)
 		}
 	}
 }
