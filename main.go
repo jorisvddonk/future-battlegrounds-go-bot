@@ -26,7 +26,9 @@ func main() {
 
 	// Set up a connection to the server.
 	actualAddress := address
-	if len(os.Args) > 1 {
+	if os.Getenv("FB_SERVER") != "" {
+		actualAddress = os.Getenv("FB_SERVER")
+	} else if len(os.Args) > 1 {
 		arg := os.Args[1]
 		actualAddress = arg
 	}
