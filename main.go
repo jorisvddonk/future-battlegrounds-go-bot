@@ -6,7 +6,7 @@ import (
 	"log"
 	"math"
 
-	pb "./futurebattlegrounds"
+	pb "github.com/jorisvddonk/future-battlegrounds-go-bot/futurebattlegrounds"
 	v "github.com/ungerik/go3d/float64/vec2"
 	"google.golang.org/grpc"
 )
