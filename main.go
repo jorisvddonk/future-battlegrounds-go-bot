@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"math"
+	"os"
 
 	pb "github.com/jorisvddonk/future-battlegrounds-go-bot/futurebattlegrounds"
 	v "github.com/ungerik/go3d/float64/vec2"
@@ -24,8 +25,13 @@ func main() {
 	// East := v.T{1, 0}
 
 	// Set up a connection to the server.
-	log.Printf("Running...")
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	actualAddress := address
+	if len(os.Args) > 1 {
+		arg := os.Args[1]
+		actualAddress = arg
+	}
+	log.Printf("Connecting to %v", actualAddress)
+	conn, err := grpc.Dial(actualAddress, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
